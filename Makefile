@@ -1,6 +1,6 @@
 NAME = push_swap
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -ggdb -Wall -Wextra -Werror
 
 SRC = push_swap.c
 OBJS = $(SRC:.c=.o)
@@ -12,9 +12,6 @@ $(NAME): $(OBJS)
 
 %.o: %.c push_swap.h
 	$(CC) $(CFLAGS) -c $< -o $@
-
-run: $(NAME)
-	./$(NAME)
 
 clean:
 	rm -f $(OBJS)

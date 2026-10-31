@@ -5,7 +5,8 @@
 
 int main(int argc, char *argv[]) {
     int i;
-    int *numbers = NULL;
+    int *stack_a = NULL;
+    int *stack_b = NULL;
 
     int simple = 0;      // n^2
     int medium = 0;      // n√n
@@ -17,22 +18,47 @@ int main(int argc, char *argv[]) {
         if (ft_strncmp(argv[i], "--medium", ft_strlen("--medium")) == 0) medium = 1;
         if (ft_strncmp(argv[i], "--complex", ft_strlen("--complex")) == 0) complex = 1;
         if (ft_strncmp(argv[i], "--adaptive", ft_strlen("--adaptive")) == 0) adaptive = 1;
-        arr_push(numbers, ft_atoi(argv[i]));
+        arr_push(stack_a, ft_atoi(argv[i]));
     }
 
     if (!simple && !medium && !complex) adaptive = 1;
 
-    printf("\n");
-    // for(size_t j = arr_len(numbers); j-- > 0; ) ft_printf("%d\n", numbers[j]);
-    i = arr_len(numbers);
-    while (i-- > 0) ft_printf("%d\n", numbers[i]);
+    // print stack
+    printf("\nstack :\n");
+    print_arr(stack_a);
 
-    float disorder = compute_disorder(numbers);
-    printf("\nDisorder : %f\n", disorder);
+    // arr_push(stack_a, 6);
+    // int popped = arr_pop(stack_a);
+    // print_arr(stack_a);
+    // rotate(stack_a);
+    // rrotate(stack_a);
 
+    // print disorder
+    float disorder = compute_disorder(stack_a);
+    // printf("\nDisorder : %f\n", disorder);
+    printf("\n\nDisorder : %d%%\n", (int)(disorder * 100));
 
-    ft_printf("\nFlags\n Simple : %d\n Medium : %d\n Complex : %d\n Adaptive : %d\n", simple, medium, complex, adaptive);
+    int sort3 = sorted3(stack_a);
+    printf("\n\nsorted3 = %d\n\n", sort3);
 
-    arr_free(numbers);
+    if (sort3) {
+        int k = 0;
+        while (k < 3) {
+            arr_push(stack_b, stack_a[arr_len(stack_a) - 1]);
+            arr_pop(stack_a);
+            k++;
+        }
+    }
+
+    print_arr(stack_a);
+    print_arr(stack_b);
+
+    int *dup = arr_dup(stack_a);
+    insertion_sort(dup);
+    print_arr(dup);
+
+    ft_printf("\n\nStrategy:\n- Simple : %d\n- Medium : %d\n- Complex : %d\n- Adaptive : %d\n", simple, medium, complex, adaptive);
+
+    arr_free(stack_a);
     return 0;
 }
