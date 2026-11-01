@@ -3,6 +3,21 @@
 #define PUSH_SWAP_IMPLEMENTATION
 #include "push_swap.h"
 
+/*
+    functions / definitions :
+    arr_push(stack_a, 6);
+    int popped = arr_pop(stack_a);
+    arr_len(arr);
+    arr_free(arr);
+    print_arr(stack_a);
+    swap(arr);
+    ss(arr1, arr2);
+    rotate(stack_a);
+    rr(arr1, arr2);
+    rrotate(stack_a);
+    rrr(arr1, arr2);
+*/
+
 int main(int argc, char *argv[]) {
     int i;
     int *stack_a = NULL;
@@ -24,40 +39,25 @@ int main(int argc, char *argv[]) {
     if (!simple && !medium && !complex) adaptive = 1;
 
     // print stack
-    printf("\nstack :\n");
-    print_arr(stack_a);
-
-    // arr_push(stack_a, 6);
-    // int popped = arr_pop(stack_a);
+    // printf("\nstack :\n");
     // print_arr(stack_a);
-    // rotate(stack_a);
-    // rrotate(stack_a);
+    // printf("\n\n");
+
+
 
     // print disorder
     float disorder = compute_disorder(stack_a);
+    if (!disorder)
+        return 0;
+
     // printf("\nDisorder : %f\n", disorder);
-    printf("\n\nDisorder : %d%%\n", (int)(disorder * 100));
+    // printf("\n\nDisorder : %d%%\n", (int)(disorder * 100));
 
-    int sort3 = sorted3(stack_a);
-    printf("\n\nsorted3 = %d\n\n", sort3);
+    ft_simple(stack_a, stack_b);
+    // printf("\n stack a : \n");
+    // print_arr(stack_a);
 
-    if (sort3) {
-        int k = 0;
-        while (k < 3) {
-            arr_push(stack_b, stack_a[arr_len(stack_a) - 1]);
-            arr_pop(stack_a);
-            k++;
-        }
-    }
-
-    print_arr(stack_a);
-    print_arr(stack_b);
-
-    int *dup = arr_dup(stack_a);
-    insertion_sort(dup);
-    print_arr(dup);
-
-    ft_printf("\n\nStrategy:\n- Simple : %d\n- Medium : %d\n- Complex : %d\n- Adaptive : %d\n", simple, medium, complex, adaptive);
+    // ft_printf("\n\nStrategy:\n- Simple : %d\n- Medium : %d\n- Complex : %d\n- Adaptive : %d\n", simple, medium, complex, adaptive);
 
     arr_free(stack_a);
     return 0;

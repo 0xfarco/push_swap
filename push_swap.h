@@ -20,10 +20,10 @@ int	ft_print_pointer(void *ptr);
 int	ft_printf(const char *format, ...);
 int	ft_strncmp(const char *s1, const char *s2, size_t n);
 // int sorted3(int *arr);
-void simple(int *arr1, int *arr2, int N);
-double ft_sqrt(double x);
-void insertion_sort(int *arr);
-void medium(int *arr1, int *arr2);
+void ft_simple(int *arr1, int *arr2);
+// double ft_sqrt(double x);
+// void insertion_sort(int *arr);
+// void medium(int *arr1, int *arr2);
 
 typedef struct {
     size_t count;
@@ -183,29 +183,63 @@ float compute_disorder(int *arr) {
 // }
 
 // simple - selection sort
-void simple(int *arr1, int *arr2, int N) {
+void ft_simple(int *arr1, int *arr2) {
     int i;
+    int N;
     size_t min_idx;
-    i = 0;
-    min_idx = 0;
     Header *header = (Header *)arr1 - 1;
-    while (arr_len(arr1) > 0) {
-    	while (i < N - 1) {
+
+    while (header->count > 0) {
+        N = header->count;
+        min_idx = 0;
+        i = 1;
+
+        while (i < N) {
     	    if (arr1[i] < arr1[min_idx]) min_idx = i;
-    	}
-    	int dir = 1;
-        if (min_idx < (header->count / 2))
-            dir = 0;                                         // 0 = left, 1 = right
-    	if (dir) {
-    	    //rrotate
-    	    // size_t i = 0;
-    	    while (arr1[header->count - 1] != arr1[min_idx]) rrotate(arr1);
-    	} else {
-    	    while (arr1[header->count - 1] != arr1[min_idx]) rotate(arr1);
+            i++;
     	}
 
-    	arr_push(arr2, arr1[header->count - 1]);
+        size_t t = min_idx;
+        if (t <= (size_t)N / 2)
+        {
+            while (arr1[t] != arr1[header->count - 1])
+            {
+                rrotate(arr1);
+                ft_printf("RRA\n");
+                t = (t - 1 + header->count) % header->count;
+                // printf("\nstack A : \n");
+                // print_arr(arr1);
+            }
+        }
+        else
+        {
+            while (arr1[t] != arr1[header->count - 1])
+            {
+                rotate(arr1);
+                ft_printf("RA\n");
+                t = (t + 1) % header->count;
+                // printf("\nstack A : \n");
+                // print_arr(arr1);
+            }
+        }
+
+
+        int value = arr1[header->count - 1];
+
+    	arr_push(arr2, value);
+        printf("PB\n");
+        // printf("\nstack B : \n");
+        // print_arr(arr2);
     	arr_pop(arr1);
+        // printf("\nstack A : \n");
+        // print_arr(arr1);
+        // printf("--------------------\n");
+    }
+
+    while (arr_len(arr2) > 0)
+    {
+        arr_push(arr1, arr2[arr_len(arr2) - 1]);
+        arr_pop(arr2);
     }
 }
 
@@ -222,70 +256,70 @@ int *arr_dup(int *arr) {
     return dup;
 }
 
-double ft_sqrt(double x)
-{
-    double y;
-    int p,square,c;
-
-    /* find the surrounding perfect squares */
-    p = 0;
-    do
-    {
-        p++;
-        square = (p+1) * (p+1);
-    }
-    while( x > square );
-
-    /* process the root */
-    y = (double)p;
-    c = 0;
-    while(c<10)
-    {
-        /* divide and average */
-        y = (x/y + y)/2;
-        /* test for success */
-        if( y*y == x)
-            return(y);
-        c++;
-    }
-    return(y);
-}
+// double ft_sqrt(double x)
+// {
+//     double y;
+//     int p,square,c;
+//
+//     /* find the surrounding perfect squares */
+//     p = 0;
+//     do
+//     {
+//         p++;
+//         square = (p+1) * (p+1);
+//     }
+//     while( x > square );
+//
+//     /* process the root */
+//     y = (double)p;
+//     c = 0;
+//     while(c<10)
+//     {
+//         /* divide and average */
+//         y = (x/y + y)/2;
+//         /* test for success */
+//         if( y*y == x)
+//             return(y);
+//         c++;
+//     }
+//     return(y);
+// }
 
 // insertion sort
-void insertion_sort(int *arr)
-{
-    int i;
-    int j;
-    int key;
-
-    Header *header = (Header*)arr - 1;
-
-    int size = header->count;
-
-    i = 1;
-    while (i < size)
-    {
-        key = arr[i];
-        j = i - 1;
-        while (j >= 0 && arr[j] > key)
-        {
-            arr[j + 1] = arr[j];
-            j--;
-        }
-        arr[j + 1] = key;
-        i++;
-    }
-}
+// void insertion_sort(int *arr)
+// {
+//     int i;
+//     int j;
+//     int key;
+//
+//     Header *header = (Header*)arr - 1;
+//
+//     int size = header->count;
+//
+//     i = 1;
+//     while (i < size)
+//     {
+//         key = arr[i];
+//         j = i - 1;
+//         while (j >= 0 && arr[j] > key)
+//         {
+//             arr[j + 1] = arr[j];
+//             j--;
+//         }
+//         arr[j + 1] = key;
+//         i++;
+//     }
+// }
 
 // medium - chunked merge sort
-void medium(int *arr1, int *arr2) {
-    int *dup = arr_dup(arr1);
-    insertion_sort(dup);
-    print_arr(dup);
-    (void) arr2;
-    // int chunk_size = N % 2 == 0 ? ft_sqrt(N) : ft_sqrt(N + 1);
-
-}
+// void medium(int *arr1, int *arr2) {
+//     int *dup = arr_dup(arr1);
+//     insertion_sort(dup);
+//     print_arr(dup);
+//     (void) arr2;
+//     // int chunk_size = N % 2 == 0 ? ft_sqrt(N) : ft_sqrt(N + 1);
+//
+// }
 
 int	ft_atoi(const char *nptr)
 {
