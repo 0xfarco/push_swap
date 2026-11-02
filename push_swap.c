@@ -38,6 +38,8 @@ int main(int argc, char *argv[]) {
 
     if (!simple && !medium && !complex) adaptive = 1;
 
+    // ft_printf("\n\nStrategy:\n- Simple : %d\n- Medium : %d\n- Complex : %d\n- Adaptive : %d\n", simple, medium, complex, adaptive);
+
     // print stack
     // printf("\nstack :\n");
     // print_arr(stack_a);
@@ -53,11 +55,10 @@ int main(int argc, char *argv[]) {
     // printf("\nDisorder : %f\n", disorder);
     // printf("\n\nDisorder : %d%%\n", (int)(disorder * 100));
 
-    ft_simple(stack_a, stack_b);
+    // ft_simple(stack_a, stack_b);
+    ft_medium(stack_a, stack_b);
     // printf("\n stack a : \n");
     // print_arr(stack_a);
-
-    // ft_printf("\n\nStrategy:\n- Simple : %d\n- Medium : %d\n- Complex : %d\n- Adaptive : %d\n", simple, medium, complex, adaptive);
 
     arr_free(stack_a);
     return 0;

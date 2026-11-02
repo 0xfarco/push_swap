@@ -3,36 +3,41 @@ push_swap.c,55
 #define PUSH_SWAP_IMPLEMENTATION3,20
 int main(21,355
 
-push_swap.h,854
+push_swap.h,1006
 # define PUSH_SWAP_H2,20
-    size_t count;29,797
-    size_t capacity;30,815
-} Header;31,836
-#define ARR_INIT_CAPACITY 33,847
-#define arr_push(35,876
-#define arr_pop(52,2243
-#define arr_len(63,2697
-#define arr_free(65,2747
-#define sorted3(67,2795
-#define print_arr(77,3835
-#define swap(86,4136
-#define ss(97,4594
-#define rotate(103,4711
-#define rr(114,5110
-#define rrotate(120,5217
-#define rrr(132,5660
-float compute_disorder(142,5824
-void ft_simple(186,6870
-int *arr_dup(arr_dup246,8287
-int	ft_atoi(324,9774
-size_t	ft_strlen(347,10134
-void	ft_putstr_fd(357,10225
-int	ft_print_char(364,10314
-int	ft_print_hex(370,10376
-int	ft_print_pointer(386,10666
-int	ft_print_signed(397,10860
-int	ft_print_string(413,11087
-int	ft_print_unsigned(428,11250
-int	ft_handle_format(439,11426
-int	ft_printf(458,12062
-int	ft_strncmp(482,12433
+    size_t count;31,899
+    size_t capacity;32,917
+} Header;33,938
+#define ARR_INIT_CAPACITY 35,949
+#define arr_push(37,978
+#define arr_pop(54,2345
+#define arr_len(65,2799
+#define arr_free(67,2849
+#define sorted3(69,2897
+#define print_arr(79,3937
+#define swap(88,4238
+#define ss(99,4696
+#define rotate(105,4813
+#define rr(116,5212
+#define rrotate(122,5319
+#define rrr(134,5762
+float compute_disorder(144,5926
+void ft_simple(188,6972
+int *arr_dup(arr_dup248,8392
+double ft_sqrt(261,8623
+void insertionSort(316,9545
+int *insertion_sort(insertion_sort328,9832
+int search_idx(342,10137
+void ft_medium(352,10328
+int	ft_atoi(503,14216
+size_t	ft_strlen(526,14576
+void	ft_putstr_fd(536,14667
+int	ft_print_char(543,14756
+int	ft_print_hex(549,14818
+int	ft_print_pointer(565,15108
+int	ft_print_signed(576,15302
+int	ft_print_string(592,15529
+int	ft_print_unsigned(607,15692
+int	ft_handle_format(618,15868
+int	ft_printf(637,16504
+int	ft_strncmp(661,16875

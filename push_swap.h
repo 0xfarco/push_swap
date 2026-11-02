@@ -21,9 +21,11 @@ int	ft_printf(const char *format, ...);
 int	ft_strncmp(const char *s1, const char *s2, size_t n);
 // int sorted3(int *arr);
 void ft_simple(int *arr1, int *arr2);
-// double ft_sqrt(double x);
+double ft_sqrt(double x);
 // void insertion_sort(int *arr);
-// void medium(int *arr1, int *arr2);
+void insertionSort(int arr[], int left, int right);
+int *insertion_sort(int arr[], int left, int right);
+void ft_medium(int *arr1, int *arr2);
 
 typedef struct {
     size_t count;
@@ -227,7 +229,7 @@ void ft_simple(int *arr1, int *arr2) {
         int value = arr1[header->count - 1];
 
     	arr_push(arr2, value);
-        printf("PB\n");
+        // printf("PB\n");
         // printf("\nstack B : \n");
         // print_arr(arr2);
     	arr_pop(arr1);
@@ -256,34 +258,34 @@ int *arr_dup(int *arr) {
     return dup;
 }
 
-// double ft_sqrt(double x)
-// {
-//     double y;
-//     int p,square,c;
-//
-//     /* find the surrounding perfect squares */
-//     p = 0;
-//     do
-//     {
-//         p++;
-//         square = (p+1) * (p+1);
-//     }
-//     while( x > square );
-//
-//     /* process the root */
-//     y = (double)p;
-//     c = 0;
-//     while(c<10)
-//     {
-//         /* divide and average */
-//         y = (x/y + y)/2;
-//         /* test for success */
-//         if( y*y == x)
-//             return(y);
-//         c++;
-//     }
-//     return(y);
-// }
+double ft_sqrt(double x)
+{
+    double y;
+    int p,square,c;
+
+    /* find the surrounding perfect squares */
+    p = 0;
+    do
+    {
+        p++;
+        square = (p+1) * (p+1);
+    }
+    while( x > square );
+
+    /* process the root */
+    y = (double)p;
+    c = 0;
+    while(c<10)
+    {
+        /* divide and average */
+        y = (x/y + y)/2;
+        /* test for success */
+        if( y*y == x)
+            return(y);
+        c++;
+    }
+    return(y);
+}
 
 // insertion sort
 // void insertion_sort(int *arr)
@@ -311,15 +313,192 @@ int *arr_dup(int *arr) {
 //     }
 // }
 
+void insertionSort(int arr[], int left, int right) {
+    for (int i = left + 1; i <= right; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= left && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+int *insertion_sort(int arr[], int left, int right) {
+    for (int i = left + 1; i <= right; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= left && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+
+    return arr;
+}
+
+int search_idx(int *arr, int elem, int size) {
+    int i = 0;
+    while (i < size) {
+        if (arr[i] == elem) return i;
+        i++;
+    }
+    return -1;
+}
+
 // medium - chunked merge sort
-// void medium(int *arr1, int *arr2) {
-//     int *dup = arr_dup(arr1);
-//     insertion_sort(dup);
-//     print_arr(dup);
-//     (void) arr2;
-//     // int chunk_size = N % 2 == 0 ? ft_sqrt(N) : ft_sqrt(N + 1);
-//
-// }
+void ft_medium(int *arr1, int *arr2) {
+    Header *header = (Header*)arr1 - 1;
+    size_t size = header->count;
+    int *dup = arr_dup(arr1);
+    int block_size = ft_sqrt(size) + 1;
+    // int block_size = ft_sqrt(size);
+    int num_blocks = size / block_size;
+    // int *blocks[num_blocks];
+    // int blocks[num_blocks];
+    int heap[num_blocks];
+    int hs = 0;
+    // int *blocks;
+    printf("Block size : %d\n", block_size);
+    size_t i = 0;
+
+    // while (i < (size_t)num_blocks) {
+    //     blocks[i] = malloc(sizeof(int) * block_size);
+    //     i++;
+    // }
+
+    printf("\n stack A :\n");
+    print_arr(arr1);
+    printf("\n\nDup before sort :\n");
+    print_arr(dup);
+    printf("\n");
+
+    i = 0;
+	// int j = 0;
+
+	while (i < size) {
+	    int left = i;
+	    int right = (i + block_size - 1 < size)
+	                ? (i + block_size - 1)
+	                : (size - 1);
+
+	    insertionSort(dup, left, right);
+
+	    // int k = 0;
+
+        // for (int x = right; x >= left; x--) {
+        //     blocks[j][k++] = dup[x];
+        // }
+        //
+	    // j++;
+	    i += block_size;
+	}
+
+    printf("\nDup after sort :\n");
+    print_arr(dup);
+    printf("\n\n");
+
+    printf("\n-------------------------\n");
+
+    i = 0;
+    while (i < (size_t)num_blocks) {
+        printf("block %zu :\n", i);
+        size_t j = 0;
+        int min_val = 1e9;
+        int min_idx = -1;
+        while (j < (size_t)block_size) {
+            // printf("%zu : %d\n", j, dup[j + i * block_size]);
+            if (dup[j + i * block_size] < min_val) {
+                min_idx = j + i * block_size;
+                min_val = dup[j + i * block_size];
+            }
+            j++;
+        }
+        printf("min_val = %d\n", min_val);
+        int org_idx = search_idx(arr1, min_val, size);
+        // printf("index of min_val %d of block %zu at original array is %d and values at index = %d\n", min_val, i, org_idx, arr1[org_idx]);
+
+        heap[hs] = min_val;
+        int index = hs;
+        hs++;
+
+        while (index > 0 && heap[(index - 1) / 2] > heap[index]) {
+            int temp = heap[index];
+            heap[index] = heap[(index - 1) / 2];
+            heap[(index - 1) / 2] = temp;
+            index = (index - 1) / 2;
+        }
+
+        print_arr(arr1);
+        printf("\n");
+
+        size_t t = org_idx;
+        if (t <= size / 2)
+        {
+            while (arr1[t] != arr1[header->count - 1])
+            {
+                rrotate(arr1);
+                ft_printf("RRA\n");
+                t = (t - 1 + header->count) % header->count;
+                printf("\nstack A : \n");
+                print_arr(arr1);
+                printf("\n");
+            }
+        }
+        else
+        {
+            while (arr1[t] != arr1[header->count - 1])
+            {
+                rotate(arr1);
+                ft_printf("RA\n");
+                t = (t + 1) % header->count;
+                printf("\nstack A : \n");
+                print_arr(arr1);
+                printf("\n");
+            }
+        }
+
+        int value = arr1[header->count - 1];
+
+    	arr_push(arr2, value);
+        printf("PB\n");
+        printf("\nstack B : \n");
+        print_arr(arr2);
+    	arr_pop(arr1);
+        printf("\nstack A : \n");
+        print_arr(arr1);
+
+        printf("\n");
+
+        // i = 0;
+    	// while (i < (size_t)num_blocks) {
+    	//     printf("block %zu :\n", i);
+    	//     size_t j = 0;
+    	//     while (j < (size_t)block_size) {
+    	//         printf("[%zu][%zu] : %d\n", i, j, dup[j + i * block_size]);
+    	//         // printf("[%zu][%zu] : %d\n", i, j, blocks[i][j]);
+    	//         j++;
+    	//     }
+    	//     i++;
+    	// }
+
+        printf("\nheap :\n");
+        i = 0;
+        while (i < (size_t)hs) {
+            printf("%zu : %d\n", i, heap[i]);
+            i++;
+        }
+
+        printf("\n--------------------\n");
+
+        i++;
+    }
+
+    arr_free(dup);
+    (void)arr2;
+}
 
 int	ft_atoi(const char *nptr)
 {
