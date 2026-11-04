@@ -2,6 +2,7 @@
 # define PUSH_SWAP_H
 
 #include <stdlib.h>
+#include <stdarg.h>
 #include <unistd.h>
 
 // declarations
@@ -19,13 +20,13 @@ int	ft_print_hex(unsigned long n, int uppercase);
 int	ft_print_pointer(void *ptr);
 int	ft_printf(const char *format, ...);
 int	ft_strncmp(const char *s1, const char *s2, size_t n);
-// int sorted3(int *arr);
-void ft_simple(int *arr1, int *arr2);
 double ft_sqrt(double x);
-// void insertion_sort(int *arr);
 void insertionSort(int arr[], int left, int right);
-int *insertion_sort(int arr[], int left, int right);
-void ft_medium(int *arr1, int *arr2);
+
+void selection_sort(int *arr1, int **arr2);
+void insertion_sort(int *a, int **b);
+void chunk_based_sort(int *a, int **b);
+void ls_radix_sort(int *a, int **b);
 
 typedef struct {
     size_t count;
@@ -33,6 +34,10 @@ typedef struct {
 } Header;
 
 #define ARR_INIT_CAPACITY 2
+
+#ifndef CHUNK_MUL
+# define CHUNK_MUL 25   /* chunk size = sqrt(n) * CHUNK_MUL / 10 (2.5 * sqrt(n)) */
+#endif
 
 #define arr_push(arr, x)                                                                \
     do {                                                                                \
@@ -102,15 +107,18 @@ typedef struct {
         swap(arr2);    \
     } while (0)
 
-#define rotate(arr)                       \
-{                                         \
-    Header *header = (Header *)(arr) - 1; \
-    int first = (arr)[header->count - 1]; \
-    size_t i = header->count;             \
-    while (i-- > 0) {                     \
-        (arr)[i] = (arr)[i - 1];          \
-    }                                     \
-    (arr)[0] = first;                     \
+#define rotate(arr)                           \
+{                                             \
+    Header *header = (Header *)(arr) - 1;     \
+    if (header->count > 1) {                  \
+        int first = (arr)[header->count - 1]; \
+        size_t i = header->count - 1;         \
+        while (i > 0) {                       \
+            (arr)[i] = (arr)[i - 1];          \
+            i--;                              \
+        }                                     \
+        (arr)[0] = first;                     \
+    }                                         \
 }
 
 #define rr(arr1, arr2) \
@@ -119,16 +127,18 @@ typedef struct {
         rotate(arr2);  \
     }
 
-#define rrotate(arr)                      \
-{                                         \
-    Header *header = (Header *)(arr) - 1; \
-    int last = (arr)[0];                  \
-    size_t i = 0;                         \
-    while (i < header->count) {           \
-        (arr)[i] = (arr)[i + 1];          \
-        i++;                              \
-    }                                     \
-    (arr)[header->count - 1] = last;      \
+#define rrotate(arr)                          \
+{                                             \
+    Header *header = (Header *)(arr) - 1;     \
+    if (header->count > 1) {                  \
+        int last = (arr)[0];                  \
+        size_t i = 0;                         \
+        while (i + 1 < header->count) {       \
+            (arr)[i] = (arr)[i + 1];          \
+            i++;                              \
+        }                                     \
+        (arr)[header->count - 1] = last;      \
+    }                                         \
 }
 
 #define rrr(arr1, arr2) \
@@ -164,85 +174,116 @@ float compute_disorder(int *arr) {
     return ((float)mistakes / total_pairs);
 }
 
-// int sorted3(int *arr) {
-//     int t = arr_len(arr);
-//     // ft_printf("\n\n%d - %d - %d\n\n", *(arr + t - 1), *(arr + t - 2), *(arr + t - 3));
-//     return (*(arr + t - 1) < *(arr + t - 2) && *(arr + t - 1) < *(arr + t - 3) && *(arr + t - 1) < *(arr + t - 3));
-// }
+static void op_ra(int *a)
+{
+    rotate(a);
+    ft_putstr_fd("ra\n", 1);
+}
 
-// void selection_sort(int a[], int N) {
-//     int i, j, min, t;
-//     for (i = 0; i < N - 1; i++) {
-//         min = i;
-//         for (j = i + 1; j < N; j++) {
-//             if (a[j] < a[min])
-//                 min = j;
-//         }
-//         t = a[min];
-//         a[min] = a[i];
-//         a[i] = t;
-//     }
-// }
+static void op_rra(int *a)
+{
+    rrotate(a);
+    ft_putstr_fd("rra\n", 1);
+}
 
-// simple - selection sort
-void ft_simple(int *arr1, int *arr2) {
+static void op_rb(int *b)
+{
+    rotate(b);
+    ft_putstr_fd("rb\n", 1);
+}
+
+static void op_rrb(int *b)
+{
+    rrotate(b);
+    ft_putstr_fd("rrb\n", 1);
+}
+
+static void op_pb(int **a, int **b)
+{
+    int v;
+
+    v = arr_pop(*a);
+    arr_push(*b, v);
+    ft_putstr_fd("pb\n", 1);
+}
+
+static void op_pa(int **a, int **b)
+{
+    int v;
+
+    v = arr_pop(*b);
+    arr_push(*a, v);
+    ft_putstr_fd("pa\n", 1);
+}
+
+// simple strategy
+void selection_sort(int *a, int **b)
+{
+    int n;
     int i;
-    int N;
-    size_t min_idx;
-    Header *header = (Header *)arr1 - 1;
+    int min_i;
+    int up;
+    int down;
 
-    while (header->count > 0) {
-        N = header->count;
-        min_idx = 0;
-        i = 1;
-
-        while (i < N) {
-    	    if (arr1[i] < arr1[min_idx]) min_idx = i;
-            i++;
-    	}
-
-        size_t t = min_idx;
-        if (t <= (size_t)N / 2)
-        {
-            while (arr1[t] != arr1[header->count - 1])
-            {
-                rrotate(arr1);
-                ft_printf("RRA\n");
-                t = (t - 1 + header->count) % header->count;
-                // printf("\nstack A : \n");
-                // print_arr(arr1);
-            }
-        }
-        else
-        {
-            while (arr1[t] != arr1[header->count - 1])
-            {
-                rotate(arr1);
-                ft_printf("RA\n");
-                t = (t + 1) % header->count;
-                // printf("\nstack A : \n");
-                // print_arr(arr1);
-            }
-        }
-
-
-        int value = arr1[header->count - 1];
-
-    	arr_push(arr2, value);
-        // printf("PB\n");
-        // printf("\nstack B : \n");
-        // print_arr(arr2);
-    	arr_pop(arr1);
-        // printf("\nstack A : \n");
-        // print_arr(arr1);
-        // printf("--------------------\n");
-    }
-
-    while (arr_len(arr2) > 0)
+    if (arr_len(a) < 2)
+        return ;
+    while (arr_len(a) > 0)
     {
-        arr_push(arr1, arr2[arr_len(arr2) - 1]);
-        arr_pop(arr2);
+        n = (int)arr_len(a);
+        min_i = 0;
+        i = 1;
+        while (i < n)
+        {
+            if (a[i] < a[min_i])
+                min_i = i;
+            i++;
+        }
+        up = n - 1 - min_i;
+        down = min_i + 1;
+        if (up <= down)
+            while (up-- > 0)
+                op_ra(a);
+        else
+            while (down-- > 0)
+                op_rra(a);
+        op_pb(&a, b);
     }
+    while (*b && arr_len(*b) > 0)
+        op_pa(&a, b);
+}
+
+// simple strategy - adaptive
+void insertion_sort(int *a, int **b)
+{
+    int n;
+    int b_sz;
+    int value;
+
+    op_pb(&a, b);
+    n = arr_len(a);
+
+    while (n > 0)
+    {
+        op_pb(&a, b);
+        b_sz = arr_len(*b);
+
+        if (b_sz > 1)
+        {
+            value = (*b)[0];
+
+            while (b_sz > 1 && (*b)[1] > value)
+            {
+                op_rb(*b);
+                b_sz = arr_len(*b);
+            }
+
+            op_rrb(*b);
+        }
+        n--;
+    }
+
+    while (*b && arr_len(*b) > 0)
+        op_pa(&a, b);
 }
 
 int *arr_dup(int *arr) {
@@ -263,7 +304,6 @@ double ft_sqrt(double x)
     double y;
     int p,square,c;
 
-    /* find the surrounding perfect squares */
     p = 0;
     do
     {
@@ -272,46 +312,17 @@ double ft_sqrt(double x)
     }
     while( x > square );
 
-    /* process the root */
     y = (double)p;
     c = 0;
     while(c<10)
     {
-        /* divide and average */
         y = (x/y + y)/2;
-        /* test for success */
         if( y*y == x)
             return(y);
         c++;
     }
     return(y);
 }
-
-// insertion sort
-// void insertion_sort(int *arr)
-// {
-//     int i;
-//     int j;
-//     int key;
-//
-//     Header *header = (Header*)arr - 1;
-//
-//     int size = header->count;
-//
-//     i = 1;
-//     while (i < size)
-//     {
-//         key = arr[i];
-//         j = i - 1;
-//         while (j >= 0 && arr[j] > key)
-//         {
-//             arr[j + 1] = arr[j];
-//             j--;
-//         }
-//         arr[j + 1] = key;
-//         i++;
-//     }
-// }
 
 void insertionSort(int arr[], int left, int right) {
     for (int i = left + 1; i <= right; i++) {
@@ -325,179 +336,230 @@ void insertionSort(int arr[], int left, int right) {
     }
 }
 
-int *insertion_sort(int arr[], int left, int right) {
-    for (int i = left + 1; i <= right; i++) {
-        int key = arr[i];
-        int j = i - 1;
-        while (j >= left && arr[j] > key) {
-            arr[j + 1] = arr[j];
-            j--;
-        }
-        arr[j + 1] = key;
-    }
+static int rank_of(int *sorted, int n, int v)
+{
+    int lo;
+    int hi;
+    int mid;
 
-    return arr;
+    lo = 0;
+    hi = n - 1;
+    while (lo < hi)
+    {
+        mid = (lo + hi) / 2;
+        if (sorted[mid] < v)
+            lo = mid + 1;
+        else
+            hi = mid;
+    }
+    return (lo);
 }
 
-int search_idx(int *arr, int elem, int size) {
-    int i = 0;
-    while (i < size) {
-        if (arr[i] == elem) return i;
+static int count_below(int *a, int limit)
+{
+    int i;
+    int n;
+    int c;
+
+    i = 0;
+    c = 0;
+    n = (int)arr_len(a);
+    while (i < n)
+    {
+        if (a[i] < limit)
+            c++;
         i++;
     }
-    return -1;
+    return (c);
 }
 
-// medium - chunked merge sort
-void ft_medium(int *arr1, int *arr2) {
-    Header *header = (Header*)arr1 - 1;
-    size_t size = header->count;
-    int *dup = arr_dup(arr1);
-    int block_size = ft_sqrt(size) + 1;
-    // int block_size = ft_sqrt(size);
-    int num_blocks = size / block_size;
-    // int *blocks[num_blocks];
-    // int blocks[num_blocks];
-    int heap[num_blocks];
-    int hs = 0;
-    // int *blocks;
-    printf("Block size : %d\n", block_size);
-    size_t i = 0;
+static void push_chunk(int **a, int **b, int limit, int chunk)
+{
+    int left;
+    int n;
+    int up;
+    int down;
+    int v;
 
-    // while (i < (size_t)num_blocks) {
-    //     blocks[i] = malloc(sizeof(int) * block_size);
-    //     i++;
-    // }
-
-    printf("\n stack A :\n");
-    print_arr(arr1);
-    printf("\n\nDup before sort :\n");
-    print_arr(dup);
-    printf("\n");
-
-    i = 0;
-	// int j = 0;
-
-	while (i < size) {
-	    int left = i;
-	    int right = (i + block_size - 1 < size)
-	                ? (i + block_size - 1)
-	                : (size - 1);
-
-	    insertionSort(dup, left, right);
-
-	    // int k = 0;
-
-        // for (int x = right; x >= left; x--) {
-        //     blocks[j][k++] = dup[x];
-        // }
-        //
-	    // j++;
-	    i += block_size;
-	}
-
-    printf("\nDup after sort :\n");
-    print_arr(dup);
-    printf("\n\n");
-
-    printf("\n-------------------------\n");
-
-    i = 0;
-    while (i < (size_t)num_blocks) {
-        printf("block %zu :\n", i);
-        size_t j = 0;
-        int min_val = 1e9;
-        int min_idx = -1;
-        while (j < (size_t)block_size) {
-            // printf("%zu : %d\n", j, dup[j + i * block_size]);
-            if (dup[j + i * block_size] < min_val) {
-                min_idx = j + i * block_size;
-                min_val = dup[j + i * block_size];
-            }
-            j++;
-        }
-        printf("min_val = %d\n", min_val);
-        int org_idx = search_idx(arr1, min_val, size);
-        // printf("index of min_val %d of block %zu at original array is %d and values at index = %d\n", min_val, i, org_idx, arr1[org_idx]);
-
-        heap[hs] = min_val;
-        int index = hs;
-        hs++;
-
-        while (index > 0 && heap[(index - 1) / 2] > heap[index]) {
-            int temp = heap[index];
-            heap[index] = heap[(index - 1) / 2];
-            heap[(index - 1) / 2] = temp;
-            index = (index - 1) / 2;
-        }
-
-        print_arr(arr1);
-        printf("\n");
-
-        size_t t = org_idx;
-        if (t <= size / 2)
-        {
-            while (arr1[t] != arr1[header->count - 1])
-            {
-                rrotate(arr1);
-                ft_printf("RRA\n");
-                t = (t - 1 + header->count) % header->count;
-                printf("\nstack A : \n");
-                print_arr(arr1);
-                printf("\n");
-            }
-        }
+    left = count_below(*a, limit);
+    while (left-- > 0)
+    {
+        n = (int)arr_len(*a);
+        up = 0;
+        while ((*a)[n - 1 - up] >= limit)
+            up++;
+        down = 0;
+        while ((*a)[down] >= limit)
+            down++;
+        down++;
+        if (up <= down)
+            while (up-- > 0)
+                op_ra(*a);
         else
+            while (down-- > 0)
+                op_rra(*a);
+        v = (*a)[(int)arr_len(*a) - 1];
+        op_pb(a, b);
+        if (v < limit - chunk / 2 && arr_len(*b) > 1)
+            op_rb(*b);
+    }
+}
+
+static void pull_back(int **a, int **b)
+{
+    int n;
+    int i;
+    int max_i;
+    int up;
+    int down;
+
+    while (arr_len(*b) > 0)
+    {
+        n = (int)arr_len(*b);
+        i = 1;
+        max_i = 0;
+        while (i < n)
         {
-            while (arr1[t] != arr1[header->count - 1])
-            {
-                rotate(arr1);
-                ft_printf("RA\n");
-                t = (t + 1) % header->count;
-                printf("\nstack A : \n");
-                print_arr(arr1);
-                printf("\n");
-            }
-        }
-
-        int value = arr1[header->count - 1];
-
-    	arr_push(arr2, value);
-        printf("PB\n");
-        printf("\nstack B : \n");
-        print_arr(arr2);
-    	arr_pop(arr1);
-        printf("\nstack A : \n");
-        print_arr(arr1);
-
-        printf("\n");
-
-        // i = 0;
-    	// while (i < (size_t)num_blocks) {
-    	//     printf("block %zu :\n", i);
-    	//     size_t j = 0;
-    	//     while (j < (size_t)block_size) {
-    	//         printf("[%zu][%zu] : %d\n", i, j, dup[j + i * block_size]);
-    	//         // printf("[%zu][%zu] : %d\n", i, j, blocks[i][j]);
-    	//         j++;
-    	//     }
-    	//     i++;
-    	// }
-
-        printf("\nheap :\n");
-        i = 0;
-        while (i < (size_t)hs) {
-            printf("%zu : %d\n", i, heap[i]);
+            if ((*b)[i] > (*b)[max_i])
+                max_i = i;
             i++;
         }
+        up = n - 1 - max_i;
+        down = max_i + 1;
+        if (up <= down)
+            while (up-- > 0)
+                op_rb(*b);
+        else
+            while (down-- > 0)
+                op_rrb(*b);
+        op_pa(a, b);
+    }
+}
 
-        printf("\n--------------------\n");
+// medium strategy
+void chunk_based_sort(int *a, int **b)
+{
+    int n;
+    int *sorted;
+    int chunk;
+    int limit;
+    int i;
 
+    n = (int)arr_len(a);
+    if (n < 2)
+        return ;
+    sorted = arr_dup(a);
+    insertionSort(sorted, 0, n - 1);
+    i = 0;
+    while (i < n)
+    {
+        a[i] = rank_of(sorted, n, a[i]);
         i++;
     }
+    chunk = (int)ft_sqrt(n) * CHUNK_MUL / 10;
+    if (chunk < 1)
+        chunk = 1;
+    limit = chunk;
+    while (arr_len(a) > 0)
+    {
+        push_chunk(&a, b, limit, chunk);
+        limit += chunk;
+    }
+    pull_back(&a, b);
+    i = 0;
+    while (i < n)
+    {
+        a[i] = sorted[a[i]];
+        i++;
+    }
+    arr_free(sorted);
+}
 
-    arr_free(dup);
-    (void)arr2;
+void heapify(int arr[], int n, int i){
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+    if (l < n && arr[l] > arr[largest])
+        largest = l;
+
+    if (r < n && arr[r] > arr[largest])
+        largest = r;
+
+    if (largest != i) {
+        int temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(int arr[], int n){
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+
+    for (int i = n - 1; i > 0; i--) {
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+        heapify(arr, i, 0);
+    }
+}
+
+static void radix_pass(int **a, int **b, int bit)
+{
+    int n;
+    int i;
+
+    n = (int)arr_len(*a);
+    i = 0;
+    while (i < n)
+    {
+        if (((*a)[(int)arr_len(*a) - 1] >> bit) & 1)
+            op_ra(*a);
+        else
+            op_pb(a, b);
+        i++;
+    }
+    while (arr_len(*b) > 0)
+        op_pa(a, b);
+}
+
+// complex strategy
+void lsd_radix_sort(int *a, int **b)
+{
+    int n;
+    int *sorted;
+    int bits;
+    int i;
+
+    n = (int)arr_len(a);
+    if (n < 2)
+        return ;
+    sorted = arr_dup(a);
+    heapSort(sorted, n);
+    i = 0;
+    while (i < n)
+    {
+        a[i] = rank_of(sorted, n, a[i]);
+        i++;
+    }
+    bits = 0;
+    while (((n - 1) >> bits) != 0)
+        bits++;
+    i = 0;
+    while (i < bits)
+    {
+        radix_pass(&a, b, i);
+        i++;
+    }
+    i = 0;
+    while (i < n)
+    {
+        a[i] = sorted[a[i]];
+        i++;
+    }
+    arr_free(sorted);
 }
 
 int	ft_atoi(const char *nptr)
