@@ -23,28 +23,47 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n);
 int *arr_dup(int *arr);
 double ft_sqrt(double x);
 float compute_disorder(int *arr);
-static void op_ra(int *a);
-static void op_rra(int *a);
-static void op_rb(int *b);
-static void op_rrb(int *b);
-static void op_pb(int **a, int **b);
-static void op_pa(int **a, int **b);
 static int rank_of(int *sorted, int n, int v);
 static int count_below(int *a, int limit);
-static void push_chunk(int **a, int **b, int limit, int chunk);
-static void pull_back(int **a, int **b);
 void countsort(int arr[], int n);
 void insertionSort(int arr[], int left, int right);
-void selection_sort(int *arr1, int **arr2);
-void insertion_sort(int *a, int **b);
-void chunk_based_sort(int *a, int **b);
-static void radix_pass(int **a, int **b, int bit);
-void ls_radix_sort(int *a, int **b);
+int search_elem(int *a, int elem);
+
 
 typedef struct {
     size_t count;
     size_t capacity;
 } Header;
+
+typedef struct s_state {
+    size_t ra_count;
+    size_t rra_count;
+    size_t rb_count;
+    size_t rrb_count;
+    size_t rr_count;
+    size_t rrr_count;
+    size_t pa_count;
+    size_t pb_count;
+    size_t sa_count;
+    size_t sb_count;
+    size_t ss_count;
+    size_t total_count;
+} t_state;
+
+static void op_ra(int *a, t_state *st);
+static void op_rra(int *a, t_state *st);
+static void op_rb(int *b, t_state *st);
+static void op_rrb(int *b, t_state *st);
+static void op_pb(int **a, int **b, t_state *st);
+static void op_pa(int **a, int **b, t_state *st);
+
+void selection_sort(int *a, int **b, t_state *st);
+void insertion_sort(int *a, int **b, t_state *st);
+static void push_chunk(int **a, int **b, int limit, int chunk, t_state *st);
+static void pull_back(int **a, int **b, t_state *st);
+void chunk_based_sort(int *a, int **b, t_state *st);
+static void radix_pass(int **a, int **b, int bit, t_state *st);
+void ls_radix_sort(int *a, int **b, t_state *st);
 
 #define ARR_INIT_CAPACITY 2
 
@@ -187,50 +206,74 @@ float compute_disorder(int *arr) {
     return ((float)mistakes / total_pairs);
 }
 
-static void op_ra(int *a)
+int search_elem(int *a, int elem) {
+    size_t i;
+    Header *header;
+    size_t sz;
+
+    i = 0;
+    header = (Header*)a - 1;
+    sz = header->count;
+    while (i < sz) {
+        if (a[i] == elem) {
+            ft_printf("Error\n");
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static void op_ra(int *a, t_state *st)
 {
     rotate(a);
     ft_putstr_fd("ra\n", 1);
+    st->ra_count++;
 }
 
-static void op_rra(int *a)
+static void op_rra(int *a, t_state *st)
 {
     rrotate(a);
     ft_putstr_fd("rra\n", 1);
+    st->rra_count++;
 }
 
-static void op_rb(int *b)
+static void op_rb(int *b, t_state *st)
 {
     rotate(b);
     ft_putstr_fd("rb\n", 1);
+    st->rb_count++;
 }
 
-static void op_rrb(int *b)
+static void op_rrb(int *b, t_state *st)
 {
     rrotate(b);
     ft_putstr_fd("rrb\n", 1);
+    st->rrb_count++;
 }
 
-static void op_pb(int **a, int **b)
+static void op_pb(int **a, int **b, t_state *st)
 {
     int v;
 
     v = arr_pop(*a);
     arr_push(*b, v);
     ft_putstr_fd("pb\n", 1);
+    st->pb_count++;
 }
 
-static void op_pa(int **a, int **b)
+static void op_pa(int **a, int **b, t_state *st)
 {
     int v;
 
     v = arr_pop(*b);
     arr_push(*a, v);
     ft_putstr_fd("pa\n", 1);
+    st->pa_count++;
 }
 
 // simple strategy
-void selection_sort(int *a, int **b)
+void selection_sort(int *a, int **b, t_state *st)
 {
     int n;
     int i;
@@ -254,30 +297,33 @@ void selection_sort(int *a, int **b)
         up = n - 1 - min_i;
         down = min_i + 1;
         if (up <= down)
-            while (up-- > 0)
-                op_ra(a);
+            while (up-- > 0) {
+                op_ra(a, st);
+            }
         else
-            while (down-- > 0)
-                op_rra(a);
-        op_pb(&a, b);
+            while (down-- > 0) {
+                op_rra(a, st);
+            }
+        op_pb(&a, b, st);
     }
-    while (*b && arr_len(*b) > 0)
-        op_pa(&a, b);
+    while (*b && arr_len(*b) > 0) {
+        op_pa(&a, b, st);
+    }
 }
 
 // simple strategy - adaptive
-void insertion_sort(int *a, int **b)
+void insertion_sort(int *a, int **b, t_state *st)
 {
     int n;
     int b_sz;
     int value;
 
-    op_pb(&a, b);
+    op_pb(&a, b, st);
     n = arr_len(a);
 
     while (n > 0)
     {
-        op_pb(&a, b);
+        op_pb(&a, b, st);
         b_sz = arr_len(*b);
 
         if (b_sz > 1)
@@ -286,17 +332,18 @@ void insertion_sort(int *a, int **b)
 
             while (b_sz > 1 && (*b)[1] > value)
             {
-                op_rb(*b);
+                op_rb(*b, st);
                 b_sz = arr_len(*b);
             }
 
-            op_rrb(*b);
+            op_rrb(*b, st);
         }
         n--;
     }
 
-    while (*b && arr_len(*b) > 0)
-        op_pa(&a, b);
+    while (*b && arr_len(*b) > 0) {
+        op_pa(&a, b, st);
+    }
 }
 
 int *arr_dup(int *arr) {
@@ -386,7 +433,7 @@ static int count_below(int *a, int limit)
     return (c);
 }
 
-static void push_chunk(int **a, int **b, int limit, int chunk)
+static void push_chunk(int **a, int **b, int limit, int chunk, t_state *st)
 {
     int left;
     int n;
@@ -406,19 +453,22 @@ static void push_chunk(int **a, int **b, int limit, int chunk)
             down++;
         down++;
         if (up <= down)
-            while (up-- > 0)
-                op_ra(*a);
+            while (up-- > 0) {
+                op_ra(*a, st);
+            }
         else
-            while (down-- > 0)
-                op_rra(*a);
+            while (down-- > 0) {
+                op_rra(*a, st);
+            }
         v = (*a)[(int)arr_len(*a) - 1];
-        op_pb(a, b);
-        if (v < limit - chunk / 2 && arr_len(*b) > 1)
-            op_rb(*b);
+        op_pb(a, b, st);
+        if (v < limit - chunk / 2 && arr_len(*b) > 1) {
+            op_rb(*b, st);
+        }
     }
 }
 
-static void pull_back(int **a, int **b)
+static void pull_back(int **a, int **b, t_state *st)
 {
     int n;
     int i;
@@ -440,17 +490,57 @@ static void pull_back(int **a, int **b)
         up = n - 1 - max_i;
         down = max_i + 1;
         if (up <= down)
-            while (up-- > 0)
-                op_rb(*b);
+            while (up-- > 0) {
+                op_rb(*b, st);
+            }
         else
-            while (down-- > 0)
-                op_rrb(*b);
-        op_pa(a, b);
+            while (down-- > 0) {
+                op_rrb(*b, st);
+            }
+        op_pa(a, b, st);
     }
 }
 
 // medium strategy
-void chunk_based_sort(int *a, int **b)
+// void chunk_based_sort(int *a, int **b)
+// {
+//     int n;
+//     int *sorted;
+//     int chunk;
+//     int limit;
+//     int i;
+//
+//     n = (int)arr_len(a);
+//     if (n < 2)
+//         return ;
+//     sorted = arr_dup(a);
+//     insertionSort(sorted, 0, n - 1);
+//     i = 0;
+//     while (i < n)
+//     {
+//         a[i] = rank_of(sorted, n, a[i]);
+//         i++;
+//     }
+//     chunk = (int)ft_sqrt(n) * CHUNK_MUL / 10;
+//     if (chunk < 1)
+//         chunk = 1;
+//     limit = chunk;
+//     while (arr_len(a) > 0)
+//     {
+//         push_chunk(&a, b, limit, chunk);
+//         limit += chunk;
+//     }
+//     pull_back(&a, b);
+//     i = 0;
+//     while (i < n)
+//     {
+//         a[i] = sorted[a[i]];
+//         i++;
+//     }
+//     arr_free(sorted);
+// }
+
+void chunk_based_sort(int *a, int **b, t_state *st)
 {
     int n;
     int *sorted;
@@ -475,10 +565,10 @@ void chunk_based_sort(int *a, int **b)
     limit = chunk;
     while (arr_len(a) > 0)
     {
-        push_chunk(&a, b, limit, chunk);
+        push_chunk(&a, b, limit, chunk, st);
         limit += chunk;
     }
-    pull_back(&a, b);
+    pull_back(&a, b, st);
     i = 0;
     while (i < n)
     {
@@ -521,7 +611,7 @@ void countsort(int arr[], int n) {
     free(ans);
 }
 
-static void radix_pass(int **a, int **b, int bit)
+static void radix_pass(int **a, int **b, int bit, t_state *st)
 {
     int n;
     int i;
@@ -531,17 +621,17 @@ static void radix_pass(int **a, int **b, int bit)
     while (i < n)
     {
         if (((*a)[(int)arr_len(*a) - 1] >> bit) & 1)
-            op_ra(*a);
+            op_ra(*a, st);
         else
-            op_pb(a, b);
+            op_pb(a, b, st);
         i++;
     }
     while (arr_len(*b) > 0)
-        op_pa(a, b);
+        op_pa(a, b, st);
 }
 
 // complex strategy
-void lsd_radix_sort(int *a, int **b)
+void lsd_radix_sort(int *a, int **b, t_state *st)
 {
     int n;
     int *sorted;
@@ -565,7 +655,7 @@ void lsd_radix_sort(int *a, int **b)
     i = 0;
     while (i < bits)
     {
-        radix_pass(&a, b, i);
+        radix_pass(&a, b, i, st);
         i++;
     }
     i = 0;
