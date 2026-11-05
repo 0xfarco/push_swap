@@ -20,12 +20,25 @@ int	ft_print_hex(unsigned long n, int uppercase);
 int	ft_print_pointer(void *ptr);
 int	ft_printf(const char *format, ...);
 int	ft_strncmp(const char *s1, const char *s2, size_t n);
+int *arr_dup(int *arr);
 double ft_sqrt(double x);
+float compute_disorder(int *arr);
+static void op_ra(int *a);
+static void op_rra(int *a);
+static void op_rb(int *b);
+static void op_rrb(int *b);
+static void op_pb(int **a, int **b);
+static void op_pa(int **a, int **b);
+static int rank_of(int *sorted, int n, int v);
+static int count_below(int *a, int limit);
+static void push_chunk(int **a, int **b, int limit, int chunk);
+static void pull_back(int **a, int **b);
+void countsort(int arr[], int n);
 void insertionSort(int arr[], int left, int right);
-
 void selection_sort(int *arr1, int **arr2);
 void insertion_sort(int *a, int **b);
 void chunk_based_sort(int *a, int **b);
+static void radix_pass(int **a, int **b, int bit);
 void ls_radix_sort(int *a, int **b);
 
 typedef struct {
@@ -475,35 +488,37 @@ void chunk_based_sort(int *a, int **b)
     arr_free(sorted);
 }
 
-void heapify(int arr[], int n, int i){
-    int largest = i;
-    int l = 2 * i + 1;
-    int r = 2 * i + 2;
-    if (l < n && arr[l] > arr[largest])
-        largest = l;
+void countsort(int arr[], int n) {
+    int maxval = 0;
 
-    if (r < n && arr[r] > arr[largest])
-        largest = r;
-
-    if (largest != i) {
-        int temp = arr[i];
-        arr[i] = arr[largest];
-        arr[largest] = temp;
-
-        heapify(arr, n, largest);
+    for (int i = 0; i < n; i++) {
+        if (arr[i] > maxval) {
+            maxval = arr[i];
+        }
     }
-}
 
-void heapSort(int arr[], int n){
-    for (int i = n / 2 - 1; i >= 0; i--)
-        heapify(arr, n, i);
+    int* cntArr = (int*)calloc(maxval + 1, sizeof(int));
 
-    for (int i = n - 1; i > 0; i--) {
-        int temp = arr[0];
-        arr[0] = arr[i];
-        arr[i] = temp;
-        heapify(arr, i, 0);
+    for (int i = 0; i < n; i++) {
+        cntArr[arr[i]]++;
     }
+
+    for (int i = 1; i <= maxval; i++) {
+        cntArr[i] += cntArr[i - 1];
+    }
+
+    int* ans = (int*)malloc(n * sizeof(int));
+    for (int i = n - 1; i >= 0; i--) {
+        ans[cntArr[arr[i]] - 1] = arr[i];
+        cntArr[arr[i]]--;
+    }
+
+    for (int i = 0; i < n; i++) {
+        arr[i] = ans[i];
+    }
+
+    free(cntArr);
+    free(ans);
 }
 
 static void radix_pass(int **a, int **b, int bit)
@@ -537,7 +552,7 @@ void lsd_radix_sort(int *a, int **b)
     if (n < 2)
         return ;
     sorted = arr_dup(a);
-    heapSort(sorted, n);
+    countsort(sorted, n);
     i = 0;
     while (i < n)
     {

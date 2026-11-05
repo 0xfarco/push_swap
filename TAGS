@@ -3,55 +3,54 @@ push_swap.c,55
 #define PUSH_SWAP_IMPLEMENTATION3,20
 int main(21,355
 
-push_swap.h,1418
+push_swap.h,1403
 # define PUSH_SWAP_H2,20
-    size_t count;32,890
-    size_t capacity;33,908
-} Header;34,929
-#define ARR_INIT_CAPACITY 36,940
-# define CHUNK_MUL 39,987
-#define arr_push(42,1079
-#define arr_pop(59,2446
-#define arr_len(70,2900
-#define arr_free(72,2950
-#define sorted3(74,2998
-#define print_arr(84,4038
-#define swap(93,4339
-#define ss(104,4797
-#define rotate(110,4914
-#define rr(124,5493
-#define rrotate(130,5600
-#define rrr(144,6179
-float compute_disorder(154,6343
-static void op_ra(177,6764
-static void op_rra(183,6839
-static void op_rb(189,6917
-static void op_rrb(195,6992
-static void op_pb(201,7070
-static void op_pa(210,7194
-void selection_sort(220,7337
-void insertion_sort(256,8017
-int *arr_dup(arr_dup289,8526
-double ft_sqrt(302,8757
-void insertionSort(327,9079
-static int rank_of(339,9366
-static int count_below(358,9651
-static void push_chunk(376,9881
-static void pull_back(408,10568
-void chunk_based_sort(440,11152
-void heapify(478,11814
-void heapSort(497,12199
-static void radix_pass(509,12452
-void lsd_radix_sort(529,12793
-int	ft_atoi(565,13348
-size_t	ft_strlen(588,13708
-void	ft_putstr_fd(598,13799
-int	ft_print_char(605,13888
-int	ft_print_hex(611,13950
-int	ft_print_pointer(627,14240
-int	ft_print_signed(638,14434
-int	ft_print_string(654,14661
-int	ft_print_unsigned(669,14824
-int	ft_handle_format(680,15000
-int	ft_printf(699,15636
-int	ft_strncmp(723,16007
+    size_t count;45,1411
+    size_t capacity;46,1429
+} Header;47,1450
+#define ARR_INIT_CAPACITY 49,1461
+# define CHUNK_MUL 52,1508
+#define arr_push(55,1600
+#define arr_pop(72,2967
+#define arr_len(83,3421
+#define arr_free(85,3471
+#define sorted3(87,3519
+#define print_arr(97,4559
+#define swap(106,4860
+#define ss(117,5318
+#define rotate(123,5435
+#define rr(137,6014
+#define rrotate(143,6121
+#define rrr(157,6700
+float compute_disorder(167,6864
+static void op_ra(190,7285
+static void op_rra(196,7360
+static void op_rb(202,7438
+static void op_rrb(208,7513
+static void op_pb(214,7591
+static void op_pa(223,7715
+void selection_sort(233,7858
+void insertion_sort(269,8538
+int *arr_dup(arr_dup302,9047
+double ft_sqrt(315,9278
+void insertionSort(340,9600
+static int rank_of(352,9887
+static int count_below(371,10172
+static void push_chunk(389,10402
+static void pull_back(421,11089
+void chunk_based_sort(453,11673
+void countsort(491,12335
+static void radix_pass(524,12972
+void lsd_radix_sort(544,13313
+int	ft_atoi(580,13869
+size_t	ft_strlen(603,14229
+void	ft_putstr_fd(613,14320
+int	ft_print_char(620,14409
+int	ft_print_hex(626,14471
+int	ft_print_pointer(642,14761
+int	ft_print_signed(653,14955
+int	ft_print_string(669,15182
+int	ft_print_unsigned(684,15345
+int	ft_handle_format(695,15521
+int	ft_printf(714,16157
+int	ft_strncmp(738,16528

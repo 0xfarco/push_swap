@@ -60,9 +60,9 @@ int main(int argc, char *argv[]) {
         if (disorder >= 0.5) strategy_string = "Adaptive / O(nlogn)";
     }
 
-    // printf("\nstack:\n");
-    // print_arr(stack_a);
-    // printf("\n\n");
+    printf("\nstack A :\n");
+    print_arr(stack_a);
+    printf("\n\n");
 
     // printf("\nDisorder : %f\n", disorder);
     // printf("\n\nDisorder : %d%%\n", (int)(disorder * 100));
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
         // ft_printf("[bench] ra: %d rb : %d rr : %d rra : %d rrb : %d rrr : %d\n". ra_count, rb_count, rr_count, rra_count, rrb_count, rrr_count);
     }
 
-    printf("\nstack a : \n");
+    printf("\nstack A : \n");
     print_arr(stack_a);
 
     arr_free(stack_a);
