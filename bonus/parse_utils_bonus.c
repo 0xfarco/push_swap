@@ -1,36 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ctx.c                                              :+:      :+:    :+:   */
+/*   parse_utils_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fcholakk <fcholakk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/11/11 08:41:39 by fcholakk          #+#    #+#             */
-/*   Updated: 2026/11/11 14:17:52 by fcholakk         ###   ########.fr       */
+/*   Created: 2026/11/11 08:42:13 by fcholakk          #+#    #+#             */
+/*   Updated: 2026/11/11 17:12:15 by fcholakk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "checker.h"
+#include "checker_bonus.h"
 
-void	ctx_free(t_ctx *c)
+int	is_space(char c)
 {
-	free(c->a.data);
-	free(c->b.data);
-	c->a.data = NULL;
-	c->b.data = NULL;
+	return (c == ' ' || (c >= '\t' && c <= '\r'));
 }
 
-void	fatal(t_ctx *c)
+size_t	count_tokens(const char *s)
 {
-	ctx_free(c);
-	write(2, "Error\n", 6);
-	exit(1);
-}
+	size_t	i;
+	size_t	n;
 
-void	ctx_init(t_ctx *c, int cap)
-{
-	c->a.data = NULL;
-	c->b.data = NULL;
-	if (!stack_init(&c->a, cap) || !stack_init(&c->b, cap))
-		fatal(c);
+	i = 0;
+	n = 0;
+	while (s[i])
+	{
+		while (s[i] && is_space(s[i]))
+			i++;
+		if (!s[i])
+			break ;
+		n++;
+		while (s[i] && !is_space(s[i]))
+			i++;
+	}
+	return (n);
 }

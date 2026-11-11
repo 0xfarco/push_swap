@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_int.c                                        :+:      :+:    :+:   */
+/*   parse_int_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fcholakk <fcholakk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/11 08:42:10 by fcholakk          #+#    #+#             */
-/*   Updated: 2026/11/11 09:48:26 by fcholakk         ###   ########.fr       */
+/*   Updated: 2026/11/11 17:12:12 by fcholakk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "checker.h"
+#include "checker_bonus.h"
 
 static long	read_digits(const char *s, size_t n)
 {

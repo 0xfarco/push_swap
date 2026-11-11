@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ops_swap.c                                         :+:      :+:    :+:   */
+/*   ops_push_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fcholakk <fcholakk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/11/11 08:42:03 by fcholakk          #+#    #+#             */
-/*   Updated: 2026/11/11 14:28:10 by fcholakk         ###   ########.fr       */
+/*   Created: 2026/11/11 08:41:55 by fcholakk          #+#    #+#             */
+/*   Updated: 2026/11/11 17:11:59 by fcholakk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "checker.h"
+#include "checker_bonus.h"
 
-void	op_sa(t_ctx *c)
+void	op_pa(t_ctx *c)
 {
-	stack_swap(&c->a);
+	if (c->b.size == 0)
+		return ;
+	stack_push(&c->a, stack_pop(&c->b));
 }
 
-void	op_sb(t_ctx *c)
+void	op_pb(t_ctx *c)
 {
-	stack_swap(&c->b);
-}
-
-void	op_ss(t_ctx *c)
-{
-	stack_swap(&c->a);
-	stack_swap(&c->b);
+	if (c->a.size == 0)
+		return ;
+	stack_push(&c->b, stack_pop(&c->a));
 }

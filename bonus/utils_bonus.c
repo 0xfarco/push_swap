@@ -1,4 +1,4 @@
-#include "checker.h"
+#include "checker_bonus.h"
 
 int	str_eq(const char *a, const char *b)
 {

@@ -1,5 +1,5 @@
-#include "checker.h"
-#include "get_next_line.h"
+#include "checker_bonus.h"
+#include "get_next_line_bonus.h"
 
 int	main(int argc, char **argv)
 {
