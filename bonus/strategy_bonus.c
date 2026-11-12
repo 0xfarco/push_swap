@@ -6,7 +6,7 @@
 /*   By: fcholakk <fcholakk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/11 08:42:41 by fcholakk          #+#    #+#             */
-/*   Updated: 2026/11/11 17:12:22 by fcholakk         ###   ########.fr       */
+/*   Updated: 2026/11/12 13:08:35 by fcholakk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,37 +36,41 @@ static int	op_id(const char *op)
 		return (OP_RRB);
 	if (str_eq(op, "rrr"))
 		return (OP_RRR);
-
 	return (OP_ERROR);
 }
 
-void run_check(t_ctx *c, const char *op) {
-	int	id;
+static int	scan_ops(const char *op)
+{
+	int		id;
 
 	id = op_id(op);
-	
-	if (id == OP_SA)
-        op_sa(c);
-    else if (id == OP_SB)
-        op_sb(c);
-    else if (id == OP_SS)
-        op_ss(c);
-    else if (id == OP_PA)
-        op_pa(c);
-    else if (id == OP_PB)
-        op_pb(c);
-    else if (id == OP_RA)
-        op_ra(c);
-    else if (id == OP_RB)
-        op_rb(c);
-    else if (id == OP_RR)
-        op_rr(c);
-    else if (id == OP_RRA)
-        op_rra(c);
-    else if (id == OP_RRB)
-        op_rrb(c);
-    else if (id == OP_RRR)
-        op_rrr(c);
+	return (id);
+}
+
+void	run_check(t_ctx *c, const char *op)
+{
+	if (scan_ops(op) == OP_SA)
+		op_sa(c);
+	else if (scan_ops(op) == OP_SB)
+		op_sb(c);
+	else if (scan_ops(op) == OP_SS)
+		op_ss(c);
+	else if (scan_ops(op) == OP_PA)
+		op_pa(c);
+	else if (scan_ops(op) == OP_PB)
+		op_pb(c);
+	else if (scan_ops(op) == OP_RA)
+		op_ra(c);
+	else if (scan_ops(op) == OP_RB)
+		op_rb(c);
+	else if (scan_ops(op) == OP_RR)
+		op_rr(c);
+	else if (scan_ops(op) == OP_RRA)
+		op_rra(c);
+	else if (scan_ops(op) == OP_RRB)
+		op_rrb(c);
+	else if (scan_ops(op) == OP_RRR)
+		op_rrr(c);
 	else
 		exit (1);
 }

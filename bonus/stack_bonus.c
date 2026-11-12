@@ -6,7 +6,7 @@
 /*   By: fcholakk <fcholakk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/11 08:42:37 by fcholakk          #+#    #+#             */
-/*   Updated: 2026/11/11 17:12:17 by fcholakk         ###   ########.fr       */
+/*   Updated: 2026/11/12 13:01:03 by fcholakk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,4 @@ int	stack_pop(t_stack *s)
 int	stack_top(t_stack *s)
 {
 	return (s->data[s->size - 1]);
-}
-
-void stack_print(t_stack s)        
-{                            
-	int i = s.size;
-    ft_putstr_fd("[ ", 1);   
-    while (i-- > 0) {        
-        ft_putnbr_fd(s.data[i], 1); 
-        ft_putstr_fd(" ", 1);
-    }                        
-    ft_putstr_fd("]", 1);    
 }

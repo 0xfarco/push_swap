@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: fcholakk <fcholakk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/10/27 15:44:25 by fcholakk          #+#    #+#             */
-/*   Updated: 2026/11/11 17:11:44 by fcholakk         ###   ########.fr       */
+/*   Created: 2026/11/12 12:47:45 by fcholakk          #+#    #+#             */
+/*   Updated: 2026/11/12 13:11:42 by fcholakk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,8 @@ char	*get_next_line(int fd)
 			return (reset(&st), finish_line(&l));
 		c = *st.ptr++;
 		st.left--;
-		if (c != '\n') {
-			if (!push_char(&l, c))
-				return (fail(&st, &l));
-		}
+		if (c != '\n' && !push_char(&l, c))
+			return (fail(&st, &l));
 		if (c == '\n')
 			return (finish_line(&l));
 	}

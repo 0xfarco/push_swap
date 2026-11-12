@@ -1,8 +1,20 @@
-#ifndef CHECKER_H
-#define CHECKER_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   checker_bonus.h                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fcholakk <fcholakk@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/11/12 12:47:29 by fcholakk          #+#    #+#             */
+/*   Updated: 2026/11/12 13:00:56 by fcholakk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <stdlib.h>
-#include <unistd.h>
+#ifndef CHECKER_BONUS_H
+# define CHECKER_BONUS_H
+
+# include <stdlib.h>
+# include <unistd.h>
 
 enum	e_op
 {
@@ -41,8 +53,6 @@ void		stack_swap(t_stack *s);
 void		stack_rotate(t_stack *s);
 void		stack_rrotate(t_stack *s);
 void		stack_reverse(t_stack *s);
-
-void print_arr(t_stack s);
 
 /* ctx.c */
 void		ctx_init(t_ctx *c, int cap);
