@@ -13,7 +13,7 @@ SRCS    = main.c parse_args.c parse_int.c parse_utils.c \
           stack.c stack_ops.c stack_utils.c ctx.c utils.c \
           ops_swap.c ops_push.c ops_rotate.c ops_rrotate.c ops_multi.c ops_emit.c \
           moves.c rank.c strategy.c bench.c \
-          sort_simple.c sort_radix.c sort_window.c
+          sort_selection.c sort_radix.c sort_window.c
 
 BONUS_SRCS = checker_bonus.c ctx_bonus.c get_next_line_bonus.c get_next_line_utils_bonus.c \
 		  ops_push_bonus.c ops_rotate_bonus.c ops_rrotate_bonus.c ops_swap_bonus.c \
