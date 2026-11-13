@@ -6,7 +6,7 @@
 /*   By: fcholakk <fcholakk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/12 12:47:23 by fcholakk          #+#    #+#             */
-/*   Updated: 2026/11/12 13:14:44 by fcholakk         ###   ########.fr       */
+/*   Updated: 2026/11/13 11:37:48 by fcholakk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ int	main(int argc, char **argv)
 	{
 		run_check(&c, op);
 		free(op);
+		op = get_next_line(0);
 	}
 	disorder = compute_disorder(&c.a);
 	print_result(c, disorder);
