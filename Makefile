@@ -39,7 +39,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c include/push_swap.h
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BONUS_OBJ_DIR)/%.o: $(BONUS_SRC_DIR)/%.c $(BONUS_SRC_DIR)/checker_bonus.h
+$(BONUS_OBJ_DIR)/%.o: $(BONUS_SRC_DIR)/%.c $(BONUS_SRC_DIR)/checker_bonus.h $(BONUS_SRC_DIR)/get_next_line_bonus.h
 	@mkdir -p $(BONUS_OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
